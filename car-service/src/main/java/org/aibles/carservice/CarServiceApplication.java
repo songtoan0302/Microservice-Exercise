@@ -10,19 +10,11 @@ import org.springframework.web.bind.annotation.RestController;
 
 @SpringBootApplication
 @EnableEurekaClient
-@RestController
 public class CarServiceApplication {
 
     public static void main(String[] args) {
         SpringApplication.run(CarServiceApplication.class, args);
     }
 
-    @RequestMapping("/car/hello")
-	public ResponseEntity hello(@RequestParam("id") int id){
-		return ResponseEntity.ok("Hello:   "+id);
-	}
-    @RequestMapping("/car/balo")
-    public ResponseEntity balo(){
-        return ResponseEntity.ok("balo:   ");
-    }
+
 }
