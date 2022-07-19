@@ -1,22 +1,15 @@
 package org.aibles.carservice.controller;
 
-import java.util.List;
-import java.util.Objects;
-import java.util.UUID;
-import javax.validation.Valid;
 import org.aibles.carservice.dto.CarDTO;
 import org.aibles.carservice.model.Car;
 import org.aibles.carservice.service.CarService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import javax.validation.Valid;
+import java.util.List;
+import java.util.Objects;
 
 /**
  * @author ToanNS
@@ -30,8 +23,15 @@ public class CarController {
   @GetMapping("/{id}")
   public ResponseEntity getCar(@RequestParam("id") String id) {
     if (id == null) throw new RuntimeException("Bad Request");
-    Car car = carService.getCar(UUID.fromString(id));
+    Car car = carService.getCar(id);
     return ResponseEntity.ok(car);
+  }
+
+  @GetMapping("/search/{name}")
+  public ResponseEntity searchByName(@RequestParam("name") String name) {
+    if (name == null) throw new RuntimeException("Bad Request");
+    List<Car> cars = carService.findCarByName(name);
+    return ResponseEntity.ok(cars);
   }
 
   @GetMapping
@@ -55,14 +55,14 @@ public class CarController {
     if (Objects.isNull(carDTO) || id == null) {
       throw new RuntimeException();
     }
-    Car car = carService.updateCar(carDTO, UUID.fromString(id));
+    Car car = carService.updateCar(carDTO, id);
     return ResponseEntity.ok(car);
   }
 
   @DeleteMapping("/{id}")
   public ResponseEntity deleteCar(@RequestParam("id") String id) {
     if (id == null) throw new RuntimeException("Bad Request");
-    carService.deleteCar(UUID.fromString(id));
+    carService.deleteCar(id);
     return ResponseEntity.ok("Delete Car Successful!");
   }
 

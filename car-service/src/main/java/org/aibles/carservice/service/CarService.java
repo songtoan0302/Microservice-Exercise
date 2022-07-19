@@ -1,21 +1,32 @@
 package org.aibles.carservice.service;
 
-import java.util.List;
-import java.util.UUID;
 import org.aibles.carservice.dto.CarDTO;
 import org.aibles.carservice.model.Car;
+import org.springframework.data.domain.Page;
+
+import java.util.List;
 
 public interface CarService {
 
   Car createCar(CarDTO carDTO);
 
-  Car updateCar(CarDTO carDTO, UUID id);
+  Car updateCar(CarDTO carDTO, String id);
 
-  Car getCar(UUID id);
+  Car getCar(String id);
 
-  List<Car> getCars();
+  Page<Car> getCars();
 
-  void deleteCar(UUID id);
+  List<Car> findCarByName(String name);
+
+  List<Car> findCarByBrand(String brandCar);
+
+  List<Car> findCarByColor(String color);
+
+  List<Car> findCarByPrice(long price);
+
+  List<Car> findCarByEngineType(String engineType);
+
+  void deleteCar(String id);
 
   void deleteCars();
 }

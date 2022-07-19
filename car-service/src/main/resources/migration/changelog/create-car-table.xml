@@ -1,0 +1,34 @@
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+   http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.4.xsd">
+
+    <changeSet id="001" author="ToanNs">
+        <validCheckSum>8:2d64f85fc2ad06501bcaed9696298853</validCheckSum>
+        <createTable tableName="cars">
+            <column name="id" type="varchar(20)">
+                <constraints primaryKey="true" primaryKeyName="pk_car_id" unique="true"/>
+            </column>
+            <column name="name" type="varchar(50)">
+                <constraints nullable="true"/>
+            </column>
+            <column name="brand-car" type="varchar(128)">
+                <constraints nullable="true"/>
+            </column>
+            <column name="engine-type" type="varchar(128)">
+                <constraints nullable="true"/>
+            </column>
+            <column name="color" type="varchar(256)">
+                <constraints nullable="true"/>
+            </column>
+            <column name="price" type="bigint">
+                <constraints nullable="true"/>
+            </column>
+            <column name="status" type="tinyint(1)">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+
+</databaseChangeLog>
