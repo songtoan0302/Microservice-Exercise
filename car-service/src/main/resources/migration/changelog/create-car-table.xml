@@ -5,18 +5,17 @@
    http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.4.xsd">
 
     <changeSet id="001" author="ToanNs">
-        <validCheckSum>8:2d64f85fc2ad06501bcaed9696298853</validCheckSum>
         <createTable tableName="cars">
-            <column name="id" type="varchar(20)">
+            <column name="id" type="varchar(50)">
                 <constraints primaryKey="true" primaryKeyName="pk_car_id" unique="true"/>
             </column>
             <column name="name" type="varchar(50)">
                 <constraints nullable="true"/>
             </column>
-            <column name="brand-car" type="varchar(128)">
+            <column name="brand_car" type="varchar(128)">
                 <constraints nullable="true"/>
             </column>
-            <column name="engine-type" type="varchar(128)">
+            <column name="engine_type" type="varchar(128)">
                 <constraints nullable="true"/>
             </column>
             <column name="color" type="varchar(256)">

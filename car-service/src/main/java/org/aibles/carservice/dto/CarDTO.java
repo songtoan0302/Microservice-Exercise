@@ -1,6 +1,7 @@
 package org.aibles.carservice.dto;
 
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotEmpty;
 
 public class CarDTO {
   @NotBlank
@@ -11,22 +12,17 @@ public class CarDTO {
   private String engineType;//loại động cơ
   @NotBlank
   private String color;//màu xe
-  @NotBlank
   private long price;
-  @NotBlank
-  private boolean status;//trạng thai con hang
 
   public CarDTO() {
   }
 
-  public CarDTO(String name, String brandCar, String engineType, String color, long price,
-      boolean status) {
+  public CarDTO(String name, String brandCar, String engineType, String color, long price) {
     this.name = name;
     this.brandCar = brandCar;
     this.engineType = engineType;
     this.color = color;
     this.price = price;
-    this.status = status;
   }
 
   public String getName() {
@@ -69,11 +65,14 @@ public class CarDTO {
     this.price = price;
   }
 
-  public boolean getStatus() {
-    return status;
-  }
-
-  public void setStatus(boolean status) {
-    this.status = status;
+  @Override
+  public String toString() {
+    return "CarDTO{" +
+            "name='" + name + '\'' +
+            ", brandCar='" + brandCar + '\'' +
+            ", engineType='" + engineType + '\'' +
+            ", color='" + color + '\'' +
+            ", price=" + price +
+            '}';
   }
 }

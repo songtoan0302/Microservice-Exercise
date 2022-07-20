@@ -13,25 +13,25 @@ public class Car {
 
   @Id
   @Column(name = "id")
-  private UUID id;
+  private String id;
   @Column(name = "name")
   private String name;// tên
-  @Column(name = "brand-car")
+  @Column(name = "brand_car")
   private String brandCar;// thương hiệu
-  @Column(name = "engine-type")
+  @Column(name = "engine_type")
   private String engineType;//loại động cơ
   @Column(name = "color")
   private String color;//màu xe
   @Column(name = "price")
   private long price;
   @Column(name = "status")
-  private boolean status;// con hang laf true
+  private int status;// con hang laf true
 
   public Car() {
-    this.id=UUID.randomUUID();
+    this.id=UUID.randomUUID().toString();
   }
 
-  public Car(String name, String brandCar, String engineType, String color, long price,boolean status) {
+  public Car(String name, String brandCar, String engineType, String color, long price,int status) {
     this.name = name;
     this.brandCar = brandCar;
     this.engineType = engineType;
@@ -40,11 +40,11 @@ public class Car {
     this.status=status;
   }
 
-  public UUID getId() {
+  public String getId() {
     return id;
   }
 
-  public void setId(UUID id) {
+  public void setId(String id) {
     this.id = id;
   }
 
@@ -88,11 +88,11 @@ public class Car {
     this.price = price;
   }
 
-  public boolean getStatus() {
+  public int getStatus() {
     return status;
   }
 
-  public void setStatus(boolean status) {
+  public void setStatus(int status) {
     this.status = status;
   }
 
@@ -114,5 +114,18 @@ public class Car {
   @Override
   public int hashCode() {
     return Objects.hash(id, name, brandCar, engineType, color, price, status);
+  }
+
+  @Override
+  public String toString() {
+    return "Car{" +
+            "id='" + id + '\'' +
+            ", name='" + name + '\'' +
+            ", brandCar='" + brandCar + '\'' +
+            ", engineType='" + engineType + '\'' +
+            ", color='" + color + '\'' +
+            ", price=" + price +
+            ", status=" + status +
+            '}';
   }
 }
