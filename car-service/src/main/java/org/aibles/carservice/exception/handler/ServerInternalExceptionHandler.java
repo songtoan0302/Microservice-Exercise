@@ -15,19 +15,19 @@ import java.time.Instant;
  * @author toanns
  */
 @RestControllerAdvice
-
 @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
 public class ServerInternalExceptionHandler {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(ServerInternalExceptionHandler.class);
+  private static final Logger LOGGER =
+      LoggerFactory.getLogger(ServerInternalExceptionHandler.class);
 
-    @ExceptionHandler(value = {ServerInternalException.class})
-    public ExceptionResponse execute(ServerInternalException error) {
-        LOGGER.info(error.getMessage());
-        ExceptionResponse exceptionResponse = new ExceptionResponse();
-        exceptionResponse.setError("Server internal error");
-        exceptionResponse.setMessage(error.getMessage());
-        exceptionResponse.setTimestamp(Instant.now());
-        return exceptionResponse;
-    }
+  @ExceptionHandler(value = {ServerInternalException.class})
+  public ExceptionResponse execute(ServerInternalException error) {
+    LOGGER.info(error.getMessage());
+    ExceptionResponse exceptionResponse = new ExceptionResponse();
+    exceptionResponse.setError("Server internal error");
+    exceptionResponse.setMessage(error.getMessage());
+    exceptionResponse.setTimestamp(Instant.now());
+    return exceptionResponse;
+  }
 }

@@ -14,30 +14,37 @@ public class Car {
   @Id
   @Column(name = "id")
   private String id;
+
   @Column(name = "name")
-  private String name;// tên
+  private String name; // tên
+
   @Column(name = "brand_car")
-  private String brandCar;// thương hiệu
+  private String brandCar; // thương hiệu
+
   @Column(name = "engine_type")
-  private String engineType;//loại động cơ
+  private String engineType; // loại động cơ
+
   @Column(name = "color")
-  private String color;//màu xe
+  private String color; // màu xe
+
   @Column(name = "price")
   private long price;
+
   @Column(name = "status")
-  private int status;// con hang laf true
+  private int status; // con hang laf true
 
   public Car() {
-    this.id=UUID.randomUUID().toString();
+    this.id = UUID.randomUUID().toString();
   }
 
-  public Car(String name, String brandCar, String engineType, String color, long price,int status) {
+  public Car(
+      String name, String brandCar, String engineType, String color, long price, int status) {
     this.name = name;
     this.brandCar = brandCar;
     this.engineType = engineType;
     this.color = color;
     this.price = price;
-    this.status=status;
+    this.status = status;
   }
 
   public String getId() {
@@ -105,9 +112,12 @@ public class Car {
       return false;
     }
     Car car = (Car) o;
-    return price == car.price && status == car.status && Objects.equals(id, car.id)
-        && Objects.equals(name, car.name) && Objects.equals(brandCar,
-        car.brandCar) && Objects.equals(engineType, car.engineType)
+    return price == car.price
+        && status == car.status
+        && Objects.equals(id, car.id)
+        && Objects.equals(name, car.name)
+        && Objects.equals(brandCar, car.brandCar)
+        && Objects.equals(engineType, car.engineType)
         && Objects.equals(color, car.color);
   }
 
@@ -118,14 +128,26 @@ public class Car {
 
   @Override
   public String toString() {
-    return "Car{" +
-            "id='" + id + '\'' +
-            ", name='" + name + '\'' +
-            ", brandCar='" + brandCar + '\'' +
-            ", engineType='" + engineType + '\'' +
-            ", color='" + color + '\'' +
-            ", price=" + price +
-            ", status=" + status +
-            '}';
+    return "Car{"
+        + "id='"
+        + id
+        + '\''
+        + ", name='"
+        + name
+        + '\''
+        + ", brandCar='"
+        + brandCar
+        + '\''
+        + ", engineType='"
+        + engineType
+        + '\''
+        + ", color='"
+        + color
+        + '\''
+        + ", price="
+        + price
+        + ", status="
+        + status
+        + '}';
   }
 }
