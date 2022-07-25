@@ -1,6 +1,5 @@
 package org.aibles.carservice.service.impl;
 
-import org.aibles.carservice.constant.enums.StatusCar;
 import org.aibles.carservice.dto.CarDTO;
 import org.aibles.carservice.exception.NotFoundException;
 import org.aibles.carservice.exception.ServerInternalException;
@@ -31,13 +30,7 @@ public class CarServiceImpl implements CarService {
 
   @Override
   public Car createCar(CarDTO carDTO) {
-    Car car = new Car();
-    car.setName(carDTO.getName());
-    car.setBrandCar(carDTO.getBrandCar());
-    car.setStatus(StatusCar.STOCKING.code());
-    car.setColor(carDTO.getColor());
-    car.setPrice(carDTO.getPrice());
-    car.setEngineType(carDTO.getEngineType());
+    Car car = modelMapper.map(carDTO,Car.class);
     Car carCreated = carRepository.save(car);
     LOGGER.info("Created car: " + carCreated.toString());
     Optional.ofNullable(carCreated)
@@ -58,12 +51,7 @@ public class CarServiceImpl implements CarService {
                 () -> {
                   throw new NotFoundException("Car not found! ");
                 });
-    car.setName(carDTO.getName());
-    car.setBrandCar(carDTO.getBrandCar());
-    car.setStatus(StatusCar.STOCKING.code());
-    car.setColor(carDTO.getColor());
-    car.setPrice(carDTO.getPrice());
-    car.setEngineType(carDTO.getEngineType());
+    car = modelMapper.map(carDTO,Car.class);
     Car carUpdate = carRepository.save(car);
     LOGGER.info("Updated car: " + carUpdate.toString());
     Optional.of(carUpdate)

@@ -22,7 +22,7 @@ import java.util.Objects;
  * @author ToanNS
  */
 @RestController
-@RequestMapping("/api/v1/car")
+@RequestMapping("/api/v1/cars")
 public class CarController {
 
   private static final Logger LOGGER = LoggerFactory.getLogger(CarController.class);

@@ -1,7 +1,7 @@
 package org.aibles.carservice.dto;
 
+import java.util.Objects;
 import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotEmpty;
 
 public class CarDTO {
   @NotBlank
@@ -13,15 +13,18 @@ public class CarDTO {
   @NotBlank
   private String color; // màu xe
   private long price;
+  private int amount;
 
   public CarDTO() {}
 
-  public CarDTO(String name, String brandCar, String engineType, String color, long price) {
+  public CarDTO(
+      String name, String brandCar, String engineType, String color, long price, int amount) {
     this.name = name;
     this.brandCar = brandCar;
     this.engineType = engineType;
     this.color = color;
     this.price = price;
+    this.amount = amount;
   }
 
   public String getName() {
@@ -64,6 +67,36 @@ public class CarDTO {
     this.price = price;
   }
 
+  public int getAmount() {
+    return amount;
+  }
+
+  public void setAmount(int amount) {
+    this.amount = amount;
+  }
+
+  @Override
+  public boolean equals(Object o) {
+    if (this == o) {
+      return true;
+    }
+    if (o == null || getClass() != o.getClass()) {
+      return false;
+    }
+    CarDTO carDTO = (CarDTO) o;
+    return price == carDTO.price
+        && amount == carDTO.amount
+        && Objects.equals(name, carDTO.name)
+        && Objects.equals(brandCar, carDTO.brandCar)
+        && Objects.equals(engineType, carDTO.engineType)
+        && Objects.equals(color, carDTO.color);
+  }
+
+  @Override
+  public int hashCode() {
+    return Objects.hash(name, brandCar, engineType, color, price, amount);
+  }
+
   @Override
   public String toString() {
     return "CarDTO{"
@@ -81,6 +114,8 @@ public class CarDTO {
         + '\''
         + ", price="
         + price
+        + ", amount="
+        + amount
         + '}';
   }
 }

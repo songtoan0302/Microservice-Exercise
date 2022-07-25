@@ -30,21 +30,22 @@ public class Car {
   @Column(name = "price")
   private long price;
 
-  @Column(name = "status")
-  private int status; // con hang laf true
+  @Column(name = "amount")
+  private int amount;
 
   public Car() {
     this.id = UUID.randomUUID().toString();
   }
 
-  public Car(
-      String name, String brandCar, String engineType, String color, long price, int status) {
+  public Car(String id,
+      String name, String brandCar, String engineType, String color, long price, int amount) {
+    this.id=UUID.randomUUID().toString();
     this.name = name;
     this.brandCar = brandCar;
     this.engineType = engineType;
     this.color = color;
     this.price = price;
-    this.status = status;
+    this.amount = amount;
   }
 
   public String getId() {
@@ -95,12 +96,12 @@ public class Car {
     this.price = price;
   }
 
-  public int getStatus() {
-    return status;
+  public int getAmount() {
+    return amount;
   }
 
-  public void setStatus(int status) {
-    this.status = status;
+  public void setAmount(int amount) {
+    this.amount = amount;
   }
 
   @Override
@@ -113,7 +114,7 @@ public class Car {
     }
     Car car = (Car) o;
     return price == car.price
-        && status == car.status
+        && amount == car.amount
         && Objects.equals(id, car.id)
         && Objects.equals(name, car.name)
         && Objects.equals(brandCar, car.brandCar)
@@ -123,7 +124,7 @@ public class Car {
 
   @Override
   public int hashCode() {
-    return Objects.hash(id, name, brandCar, engineType, color, price, status);
+    return Objects.hash(id, name, brandCar, engineType, color, price, amount);
   }
 
   @Override
@@ -146,8 +147,8 @@ public class Car {
         + '\''
         + ", price="
         + price
-        + ", status="
-        + status
+        + ", amount="
+        + amount
         + '}';
   }
 }

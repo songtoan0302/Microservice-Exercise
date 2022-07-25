@@ -1,5 +1,6 @@
 package org.aibles.carservice.exception.handler;
 
+import java.time.Instant;
 import org.aibles.carservice.exception.ServerInternalException;
 import org.aibles.carservice.exception.response.ExceptionResponse;
 import org.slf4j.Logger;
@@ -8,8 +9,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
-
-import java.time.Instant;
 
 /**
  * @author toanns
@@ -23,9 +22,10 @@ public class ServerInternalExceptionHandler {
 
   @ExceptionHandler(value = {ServerInternalException.class})
   public ExceptionResponse execute(ServerInternalException error) {
-    LOGGER.info(error.getMessage());
+    LOGGER.error("Exception: errorCode: {}, Message: {}", HttpStatus.INTERNAL_SERVER_ERROR.value(),
+        error.getMessage());
     ExceptionResponse exceptionResponse = new ExceptionResponse();
-    exceptionResponse.setError("Server internal error");
+    exceptionResponse.setError("Server Internal Error!");
     exceptionResponse.setMessage(error.getMessage());
     exceptionResponse.setTimestamp(Instant.now());
     return exceptionResponse;
