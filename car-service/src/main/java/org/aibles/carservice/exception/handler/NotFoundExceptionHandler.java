@@ -19,15 +19,15 @@ import java.time.Instant;
 @ResponseStatus(HttpStatus.BAD_REQUEST)
 public class NotFoundExceptionHandler {
 
-    private static final Logger LOGGER= LoggerFactory.getLogger(NotFoundException.class);
+  private static final Logger LOGGER = LoggerFactory.getLogger(NotFoundException.class);
 
-    @ExceptionHandler(value = {NotFoundException.class})
-    public ExceptionResponse execute(NotFoundException error){
-        LOGGER.info(error.getMessage());
-        ExceptionResponse exceptionResponse = new ExceptionResponse();
-        exceptionResponse.setError("Not Found!");
-        exceptionResponse.setMessage(error.getMessage());
-        exceptionResponse.setTimestamp(Instant.now());
-        return exceptionResponse;
-    }
+  @ExceptionHandler(value = {NotFoundException.class})
+  public ExceptionResponse execute(NotFoundException error) {
+    LOGGER.info(error.getMessage());
+    ExceptionResponse exceptionResponse = new ExceptionResponse();
+    exceptionResponse.setError("Not Found!");
+    exceptionResponse.setMessage(error.getMessage());
+    exceptionResponse.setTimestamp(Instant.now());
+    return exceptionResponse;
+  }
 }

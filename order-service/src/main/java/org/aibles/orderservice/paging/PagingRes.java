@@ -1,12 +1,12 @@
-package org.aibles.carservice.paging;
+package org.aibles.orderservice.paging;
 
 /**
  * @author toanns
  */
-import lombok.Data;
-import org.springframework.data.domain.Page;
 
 import java.util.List;
+import lombok.Data;
+import org.springframework.data.domain.Page;
 
 @Data
 public class PagingRes<T> {

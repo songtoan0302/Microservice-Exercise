@@ -5,17 +5,16 @@ import javax.validation.constraints.NotEmpty;
 
 public class CarDTO {
   @NotBlank
-  private String name;// tên
+  private String name; // tên
   @NotBlank
-  private String brandCar;// thương hiệu
+  private String brandCar; // thương hiệu
   @NotBlank
-  private String engineType;//loại động cơ
+  private String engineType; // loại động cơ
   @NotBlank
-  private String color;//màu xe
+  private String color; // màu xe
   private long price;
 
-  public CarDTO() {
-  }
+  public CarDTO() {}
 
   public CarDTO(String name, String brandCar, String engineType, String color, long price) {
     this.name = name;
@@ -67,12 +66,21 @@ public class CarDTO {
 
   @Override
   public String toString() {
-    return "CarDTO{" +
-            "name='" + name + '\'' +
-            ", brandCar='" + brandCar + '\'' +
-            ", engineType='" + engineType + '\'' +
-            ", color='" + color + '\'' +
-            ", price=" + price +
-            '}';
+    return "CarDTO{"
+        + "name='"
+        + name
+        + '\''
+        + ", brandCar='"
+        + brandCar
+        + '\''
+        + ", engineType='"
+        + engineType
+        + '\''
+        + ", color='"
+        + color
+        + '\''
+        + ", price="
+        + price
+        + '}';
   }
 }

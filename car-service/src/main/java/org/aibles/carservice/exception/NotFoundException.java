@@ -5,16 +5,15 @@ package org.aibles.carservice.exception;
  */
 public class NotFoundException extends RuntimeException {
 
-    private String message;
+  private String message;
 
-    public NotFoundException(String message) {
-        super();
-        this.message = message;
-    }
+  public NotFoundException(String message) {
+    super();
+    this.message = message;
+  }
 
-    @Override
-    public String getMessage() {
-        return message;
-    }
-
+  @Override
+  public String getMessage() {
+    return message;
+  }
 }

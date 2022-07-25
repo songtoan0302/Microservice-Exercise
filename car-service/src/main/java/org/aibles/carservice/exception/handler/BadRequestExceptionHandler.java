@@ -14,20 +14,19 @@ import java.time.Instant;
 /**
  * @author toanns
  */
-
 @RestControllerAdvice
 @ResponseStatus(HttpStatus.BAD_REQUEST)
 public class BadRequestExceptionHandler {
 
-    private static final Logger LOGGER= LoggerFactory.getLogger(BadRequestExceptionHandler.class);
+  private static final Logger LOGGER = LoggerFactory.getLogger(BadRequestExceptionHandler.class);
 
-    @ExceptionHandler(value = {BadRequestException.class})
-    public ExceptionResponse execute(BadRequestException error){
-        LOGGER.info(error.getMessage());
-        ExceptionResponse exceptionResponse = new ExceptionResponse();
-        exceptionResponse.setError("Bad request");
-        exceptionResponse.setMessage(error.getMessage());
-        exceptionResponse.setTimestamp(Instant.now());
-        return exceptionResponse;
-    }
+  @ExceptionHandler(value = {BadRequestException.class})
+  public ExceptionResponse execute(BadRequestException error) {
+    LOGGER.info(error.getMessage());
+    ExceptionResponse exceptionResponse = new ExceptionResponse();
+    exceptionResponse.setError("Bad request");
+    exceptionResponse.setMessage(error.getMessage());
+    exceptionResponse.setTimestamp(Instant.now());
+    return exceptionResponse;
+  }
 }

@@ -27,10 +27,9 @@ public class CarController {
 
   private static final Logger LOGGER = LoggerFactory.getLogger(CarController.class);
 
-  @Autowired
-  private CarService carService;
+  @Autowired private CarService carService;
 
-  @GetMapping("{id}")
+  @GetMapping(path = "{id}")
   public ResponseEntity getCar(@PathVariable("id") String id) {
     LOGGER.info("Get car with id: " + id);
     if (id == null) throw new BadRequestException("Invalid id");
@@ -38,8 +37,9 @@ public class CarController {
     return ResponseEntity.ok(car);
   }
 
-  @GetMapping("/search/name")
-  public ResponseEntity searchByName(@RequestParam("name") String name, @Validated() final PagingReq pagingReq) {
+  @GetMapping(params = "name")
+  public ResponseEntity searchByName(
+      @RequestParam("name") String name, @Validated() final PagingReq pagingReq) {
     LOGGER.info("Find by name :" + name);
     LOGGER.info("Information input page: " + pagingReq);
     if (name == null) throw new BadRequestException("Invalid name!");
@@ -47,35 +47,40 @@ public class CarController {
     return ResponseEntity.ok(PagingRes.of(cars));
   }
 
-  @GetMapping("/search/color")
-  public ResponseEntity searchByColor(@RequestParam("color") String color, @Validated() final PagingReq pagingReq) {
+  @GetMapping(params = "color")
+  public ResponseEntity searchByColor(
+      @RequestParam("color") String color, @Validated() final PagingReq pagingReq) {
     LOGGER.info("Find by color :" + color);
     LOGGER.info("Information input page: " + pagingReq);
-    if (color == null) throw new BadRequestException("Invalid name!");
+    if (color == null) throw new BadRequestException("Invalid color!");
     Page<Car> cars = carService.findCarByColor(color, pagingReq.makePageable());
     return ResponseEntity.ok(PagingRes.of(cars));
   }
 
-  @GetMapping("/search/engine-type")
-  public ResponseEntity searchByEngineType(@RequestParam("engine-type") String engineType, @Validated() final PagingReq pagingReq) {
+  @GetMapping(params = "engine_type")
+  public ResponseEntity searchByEngineType(
+      @RequestParam("engine_type") String engineType, @Validated() final PagingReq pagingReq) {
     LOGGER.info("Find by engine type :" + engineType);
     LOGGER.info("Information input page: " + pagingReq);
-    if (engineType == null) throw new BadRequestException("Invalid name!");
+    if (engineType == null) throw new BadRequestException("Invalid engine type!");
     Page<Car> cars = carService.findCarByEngineType(engineType, pagingReq.makePageable());
     return ResponseEntity.ok(PagingRes.of(cars));
   }
 
-  @GetMapping("/search/price")
-  public ResponseEntity searchByPrice(@RequestParam("price") Long price, @Validated() final PagingReq pagingReq) {
-    LOGGER.info("Find by price : " + price);
+
+  @GetMapping(params = "price")
+  public ResponseEntity searchByPrice(
+      @RequestParam("price") Long price, @Validated() final PagingReq pagingReq) {
+    LOGGER.info("Find by price :" + price);
     LOGGER.info("Information input page: " + pagingReq);
-    if (price == null) throw new BadRequestException("Invalid name!");
+    if (price == null) throw new BadRequestException("Invalid price!");
     Page<Car> cars = carService.findCarByPrice(price, pagingReq.makePageable());
     return ResponseEntity.ok(PagingRes.of(cars));
   }
 
-  @GetMapping("/search/brand-car")
-  public ResponseEntity searchByBrandCar(@RequestParam("brand-car") String brandCar, @Validated() final PagingReq pagingReq) {
+  @GetMapping(params = "brand")
+  public ResponseEntity searchByBrandCar(
+      @RequestParam("brand") String brandCar, @Validated() final PagingReq pagingReq) {
     LOGGER.info("Find by brand car :" + brandCar);
     LOGGER.info("Information input page: " + pagingReq);
     if (brandCar == null) throw new BadRequestException("Invalid Brand Car!");
@@ -100,8 +105,9 @@ public class CarController {
     return ResponseEntity.ok(car);
   }
 
-  @PutMapping("{id}")
-  public ResponseEntity updateCar(@RequestBody @Valid CarDTO carDTO, @PathVariable("id") String id) {
+  @PutMapping(path = "{id}")
+  public ResponseEntity updateCar(
+      @RequestBody @Valid CarDTO carDTO, @PathVariable("id") String id) {
     LOGGER.info("Create car with information: " + carDTO.toString() + " and with id :" + id);
     if (Objects.isNull(carDTO) || id == null) {
       throw new BadRequestException("Invalid data input!");
@@ -110,7 +116,7 @@ public class CarController {
     return ResponseEntity.ok(car);
   }
 
-  @DeleteMapping("{id}")
+  @DeleteMapping(path = "{id}")
   public ResponseEntity deleteCar(@PathVariable("id") String id) {
     LOGGER.info("Delete car by id: " + id);
     if (id == null) throw new BadRequestException("Invalid id");
