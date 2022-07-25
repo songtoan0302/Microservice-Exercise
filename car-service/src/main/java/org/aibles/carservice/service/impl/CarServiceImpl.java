@@ -98,7 +98,7 @@ public class CarServiceImpl implements CarService {
       throw new NotFoundException("Name not existed!");
     });
     LOGGER.info("GET BY NAME: " + carPage.getContent());
-    return carRepository.findCarByName(name, pageable);
+    return carPage;
   }
 
   @Override
@@ -122,7 +122,7 @@ public class CarServiceImpl implements CarService {
   }
 
   @Override
-  public Page<Car> findCarByPrice(long price, Pageable pageable) {
+  public Page<Car> findCarByPrice(Long price, Pageable pageable) {
     Page<Car> carsPage = carRepository.findCarByPrice(price, pageable);
     Optional.ofNullable(carsPage).orElseThrow(() -> {
       throw new NotFoundException("Color not existed!");
@@ -138,7 +138,7 @@ public class CarServiceImpl implements CarService {
       throw new NotFoundException("Engine type not existed!");
     });
     LOGGER.info("GET BY ENGINE TYPE : " + carsPage.getContent());
-    return null;
+    return carsPage;
   }
 
   @Cacheable(value = "car", key = "#id")

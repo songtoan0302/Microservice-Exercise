@@ -67,7 +67,7 @@ public class CarController {
 
   @GetMapping("/search/price")
   public ResponseEntity searchByPrice(@RequestParam("price") Long price, @Validated() final PagingReq pagingReq) {
-    LOGGER.info("Find by price :" + price);
+    LOGGER.info("Find by price : " + price);
     LOGGER.info("Information input page: " + pagingReq);
     if (price == null) throw new BadRequestException("Invalid name!");
     Page<Car> cars = carService.findCarByPrice(price, pagingReq.makePageable());

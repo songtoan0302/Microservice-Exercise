@@ -21,7 +21,7 @@ public interface CarService {
 
   Page<Car> findCarByColor(String color, Pageable pageable);
 
-  Page<Car> findCarByPrice(long price, Pageable pageable);
+  Page<Car> findCarByPrice(Long price, Pageable pageable);
 
   Page<Car> findCarByEngineType(String engineType, Pageable pageable);
 
