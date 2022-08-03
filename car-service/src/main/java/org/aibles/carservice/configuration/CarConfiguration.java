@@ -18,8 +18,8 @@ import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 public class CarConfiguration {
 
   @Bean
-  public CarService carService(CarRepository carRepository){
-    return new CarServiceImpl(carRepository);
+  public CarService carService(CarRepository carRepository,ModelMapper modelMapper){
+    return new CarServiceImpl(carRepository, modelMapper);
   }
   @Bean
   public ModelMapper modelMapper() {

@@ -1,15 +1,15 @@
 package org.aibles.carservice.service.impl;
 
+import javax.transaction.Transactional;
 import org.aibles.carservice.dto.CarDTO;
 import org.aibles.carservice.exception.NotFoundException;
 import org.aibles.carservice.exception.ServerInternalException;
-import org.aibles.carservice.model.Car;
+import org.aibles.carservice.entity.Car;
 import org.aibles.carservice.repository.CarRepository;
 import org.aibles.carservice.service.CarService;
 import org.modelmapper.ModelMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
@@ -23,136 +23,41 @@ public class CarServiceImpl implements CarService {
   private static final Logger LOGGER = LoggerFactory.getLogger(CarServiceImpl.class);
 
   private final CarRepository carRepository;
-  @Autowired
-  private ModelMapper modelMapper;
+  private final ModelMapper modelMapper;
 
-  public CarServiceImpl(CarRepository carRepository) {
+  public CarServiceImpl(CarRepository carRepository, ModelMapper modelMapper) {
     this.carRepository = carRepository;
+    this.modelMapper = modelMapper;
   }
 
+  /**
+   * create  a car
+   *
+   * @param carDTO
+   * @return
+   */
   @Override
-  public Car createCar(CarDTO carDTO) {
+  @Transactional
+  public CarDTO create(CarDTO carDTO) {
     Car car = modelMapper.map(carDTO, Car.class);
     Car carCreated = carRepository.save(car);
-    LOGGER.info("Service: Created car: " + carCreated.toString());
-    Optional.ofNullable(carCreated)
-        .orElseThrow(
-            () -> {
-              throw new ServerInternalException("Create car failed!Please try again!");
-            });
-    return carCreated;
+    Optional.ofNullable(carCreated).orElseThrow(() -> {
+      throw new ServerInternalException("Create car failed!Please try again!");
+    });
+    CarDTO carDTOUpdated = modelMapper.map(carCreated, CarDTO.class);
+    LOGGER.info("(Create) CarDTO: {}", carDTOUpdated);
+    return carDTOUpdated;
   }
 
-  @CachePut(value = "car", key = "#id")
-  @Override
-  public Car updateCar(CarDTO carDTO, String id) {
-    Car car =
-        carRepository
-            .findById(id)
-            .orElseThrow(
-                () -> {
-                  throw new NotFoundException("Car not found! ");
-                });
-    car = modelMapper.map(carDTO, Car.class);
-    Car carUpdate = carRepository.save(car);
-    LOGGER.info("Service: Updated car: " + carUpdate.toString());
-    Optional.of(carUpdate)
-        .orElseThrow(
-            () -> {
-              throw new ServerInternalException("Create car failed!Please try again!");
-            });
-    return carUpdate;
-  }
-
+  /**
+   * delete car by id
+   *
+   * @param id
+   */
   @Cacheable(value = "car", key = "#id")
   @Override
-  public CarDTO getCar(String id) {
-    Car car =
-        carRepository
-            .findById(id)
-            .orElseThrow(
-                () -> {
-                  throw new NotFoundException("Car not found! ");
-                });
-    LOGGER.info("Service: Get car by id with result:" + car.toString());
-    return modelMapper.map(car, CarDTO.class);
-  }
-
-  @Override
-  public Page<Car> getCars(Pageable pageable) {
-    Page<Car> listCar = carRepository.findAll(pageable);
-    Optional.ofNullable(listCar)
-        .orElseThrow(
-            () -> {
-              throw new NotFoundException("Cars not found!");
-            });
-    LOGGER.info("Service: Get list car: " + listCar.stream().toList());
-    return listCar;
-  }
-
-  @Override
-  public Page<Car> findCarByName(String name, Pageable pageable) {
-    Page<Car> carPage = carRepository.findCarByName(name, pageable);
-    Optional.ofNullable(carRepository.findCarByName(name, pageable))
-        .orElseThrow(
-            () -> {
-              throw new NotFoundException("Name not existed!");
-            });
-    LOGGER.info("Service: Get by name : " + carPage.getContent());
-    return carPage;
-  }
-
-  @Override
-  public Page<Car> findCarByBrand(String brandCar, Pageable pageable) {
-    Page<Car> carsPage = carRepository.findCarByBrand(brandCar, pageable);
-    Optional.ofNullable(carsPage)
-        .orElseThrow(
-            () -> {
-              throw new NotFoundException("Brand Car not existed!");
-            });
-    LOGGER.info("Service: Get by brand: " + carsPage.getContent());
-    return carsPage;
-  }
-
-  @Override
-  public Page<Car> findCarByColor(String color, Pageable pageable) {
-    Page<Car> carsPage = carRepository.findCarByColor(color, pageable);
-    Optional.ofNullable(carsPage)
-        .orElseThrow(
-            () -> {
-              throw new NotFoundException("Color not existed!");
-            });
-    LOGGER.info("Service: Get by color: " + carsPage.getContent());
-    return carsPage;
-  }
-
-  @Override
-  public Page<Car> findCarByPrice(Long price, Pageable pageable) {
-    Page<Car> carsPage = carRepository.findCarByPrice(price, pageable);
-    Optional.ofNullable(carsPage)
-        .orElseThrow(
-            () -> {
-              throw new NotFoundException("Color not existed!");
-            });
-    LOGGER.info("Service: Get by price : " + carsPage.getContent());
-    return carsPage;
-  }
-
-  @Override
-  public Page<Car> findCarByEngineType(String engineType, Pageable pageable) {
-    Page<Car> carsPage = carRepository.findCarByEngineType(engineType, pageable);
-    Optional.ofNullable(carsPage)
-        .orElseThrow(
-            () -> {
-              throw new NotFoundException("Engine type not existed!");
-            });
-    LOGGER.info("Service: Get by engine type: " + carsPage.getContent());
-    return carsPage;
-  }
-
-  @Cacheable(value = "car", key = "#id")
-  @Override
-  public void deleteCar(String id) {
+  @Transactional
+  public void delete(String id) {
     boolean checkExistCar = carRepository.existsById(id);
     if (!checkExistCar) {
       throw new NotFoundException("Car not found!");
@@ -162,21 +67,165 @@ public class CarServiceImpl implements CarService {
     if (checkExistCarDelete) {
       throw new ServerInternalException("Delete car failed!");
     }
-    LOGGER.info("Service: Delete car successful");
+    LOGGER.info("(Delete)");
   }
 
+  /**
+   * delete all car
+   */
   @CacheEvict
   @Override
-  public void deleteCars() {
+  @Transactional
+  public void deleteAll() {
     carRepository.deleteAll();
     List<Car> listCar = carRepository.findAll();
     if (!listCar.isEmpty()) {
       throw new ServerInternalException("Delete all car failed!");
     }
-    LOGGER.info("Service: Delete all car successful");
+    LOGGER.info("(DeleteAll)");
+  }
+
+  /**
+   * find car by name paging
+   *
+   * @param name
+   * @param pageable
+   * @return
+   */
+  @Override
+  public Page<Car> findByName(String name, Pageable pageable) {
+    Page<Car> carPage = carRepository.findByName(name, pageable);
+    Optional.ofNullable(carRepository.findByName(name, pageable)).orElseThrow(() -> {
+      throw new NotFoundException("Name not existed!");
+    });
+    LOGGER.info("(FindByName) page :{}", carPage);
+    return carPage;
+  }
+
+  /**
+   * find car by brand paging
+   *
+   * @param brandCar
+   * @param pageable
+   * @return
+   */
+  @Override
+  public Page<Car> findByBrand(String brandCar, Pageable pageable) {
+    Page<Car> carsPage = carRepository.findByBrand(brandCar, pageable);
+    Optional.ofNullable(carsPage).orElseThrow(() -> {
+      throw new NotFoundException("Brand Car not existed!");
+    });
+    LOGGER.info("(FindByBrand) page :{}", carsPage);
+    return carsPage;
+  }
+
+  /**
+   * find car by color paging
+   *
+   * @param color
+   * @param pageable
+   * @return
+   */
+  @Override
+  public Page<Car> findByColor(String color, Pageable pageable) {
+    Page<Car> carsPage = carRepository.findByColor(color, pageable);
+    Optional.ofNullable(carsPage).orElseThrow(() -> {
+      throw new NotFoundException("Color not existed!");
+    });
+    LOGGER.info("(FindByColor) page :{}", carsPage);
+    return carsPage;
+  }
+
+
+  /**
+   * find car by price paging
+   *
+   * @param price
+   * @param pageable
+   * @return
+   */
+  @Override
+  public Page<Car> findByPrice(Long price, Pageable pageable) {
+    Page<Car> carsPage = carRepository.findByPrice(price, pageable);
+    Optional.ofNullable(carsPage).orElseThrow(() -> {
+      throw new NotFoundException("Color not existed!");
+    });
+    LOGGER.info("(FindByPrice) page :{}", carsPage);
+    return carsPage;
+  }
+
+
+  /**
+   * find car by engine type paging
+   *
+   * @param engineType
+   * @param pageable
+   * @return
+   */
+  @Override
+  public Page<Car> findByEngineType(String engineType, Pageable pageable) {
+    Page<Car> carsPage = carRepository.findByEngineType(engineType, pageable);
+    Optional.ofNullable(carsPage).orElseThrow(() -> {
+      throw new NotFoundException("Engine type not existed!");
+    });
+    LOGGER.info("(FindByEngineType) page :{}", carsPage);
+    return carsPage;
+  }
+
+  /**
+   * update a car
+   *
+   * @param carDTO
+   * @param id
+   * @return
+   */
+  @CachePut(value = "car", key = "#id")
+  @Override
+  @Transactional
+  public CarDTO update(CarDTO carDTO, String id) {
+    Car car = carRepository.findById(id).orElseThrow(() -> {
+      throw new NotFoundException("Car not found! ");
+    });
+    car = modelMapper.map(carDTO, Car.class);
+    Car carUpdate = carRepository.save(car);
+    Optional.of(carUpdate).orElseThrow(() -> {
+      throw new ServerInternalException("Create car failed!Please try again!");
+    });
+    CarDTO carDTOUpdated = modelMapper.map(carUpdate, CarDTO.class);
+    LOGGER.info("(Update) car: {} ", carDTOUpdated);
+    return carDTOUpdated;
+  }
+
+  /**
+   * get a car by id
+   *
+   * @param id
+   * @return
+   */
+  @Cacheable(value = "car", key = "#id")
+  @Override
+  public CarDTO get(String id) {
+    Car car = carRepository.findById(id).orElseThrow(() -> {
+      throw new NotFoundException("Car not found! ");
+    });
+    CarDTO carDTO = modelMapper.map(car, CarDTO.class);
+    LOGGER.info("(Get) carDTO: {} ", carDTO);
+    return carDTO;
+  }
+
+  /**
+   * get all car
+   *
+   * @param pageable
+   * @return
+   */
+  @Override
+  public Page<Car> getAll(Pageable pageable) {
+    Page<Car> listCarPage = carRepository.findAll(pageable);
+    Optional.ofNullable(listCarPage).orElseThrow(() -> {
+      throw new NotFoundException("Cars not found!");
+    });
+    LOGGER.info("(Find) page :{}", listCarPage);
+    return listCarPage;
   }
 }
-// paging
-// cache
-// format code
-// handler exception

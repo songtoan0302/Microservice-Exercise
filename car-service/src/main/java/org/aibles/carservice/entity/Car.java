@@ -1,4 +1,4 @@
-package org.aibles.carservice.model;
+package org.aibles.carservice.entity;
 
 import java.util.Objects;
 import java.util.UUID;
