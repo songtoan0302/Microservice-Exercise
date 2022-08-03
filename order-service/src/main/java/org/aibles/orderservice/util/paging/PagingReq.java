@@ -1,4 +1,4 @@
-package org.aibles.orderservice.paging;
+package org.aibles.orderservice.util.paging;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import java.util.Collections;

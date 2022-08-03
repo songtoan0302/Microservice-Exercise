@@ -1,4 +1,4 @@
-package org.aibles.orderservice.paging;
+package org.aibles.orderservice.util.paging;
 
 /**
  * @author toanns

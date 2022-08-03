@@ -15,24 +15,26 @@ import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.stereotype.Service;
-
 import java.util.List;
 import java.util.Optional;
 
-@Service
 public class CarServiceImpl implements CarService {
 
   private static final Logger LOGGER = LoggerFactory.getLogger(CarServiceImpl.class);
 
-  @Autowired private CarRepository carRepository;
-  @Autowired private ModelMapper modelMapper;
+  private final CarRepository carRepository;
+  @Autowired
+  private ModelMapper modelMapper;
+
+  public CarServiceImpl(CarRepository carRepository) {
+    this.carRepository = carRepository;
+  }
 
   @Override
   public Car createCar(CarDTO carDTO) {
-    Car car = modelMapper.map(carDTO,Car.class);
+    Car car = modelMapper.map(carDTO, Car.class);
     Car carCreated = carRepository.save(car);
-    LOGGER.info("Created car: " + carCreated.toString());
+    LOGGER.info("Service: Created car: " + carCreated.toString());
     Optional.ofNullable(carCreated)
         .orElseThrow(
             () -> {
@@ -51,9 +53,9 @@ public class CarServiceImpl implements CarService {
                 () -> {
                   throw new NotFoundException("Car not found! ");
                 });
-    car = modelMapper.map(carDTO,Car.class);
+    car = modelMapper.map(carDTO, Car.class);
     Car carUpdate = carRepository.save(car);
-    LOGGER.info("Updated car: " + carUpdate.toString());
+    LOGGER.info("Service: Updated car: " + carUpdate.toString());
     Optional.of(carUpdate)
         .orElseThrow(
             () -> {
@@ -72,7 +74,7 @@ public class CarServiceImpl implements CarService {
                 () -> {
                   throw new NotFoundException("Car not found! ");
                 });
-    LOGGER.info("Get car by id with result:" + car.toString());
+    LOGGER.info("Service: Get car by id with result:" + car.toString());
     return modelMapper.map(car, CarDTO.class);
   }
 
@@ -84,7 +86,7 @@ public class CarServiceImpl implements CarService {
             () -> {
               throw new NotFoundException("Cars not found!");
             });
-    LOGGER.info("Get list car: " + listCar.stream().toList());
+    LOGGER.info("Service: Get list car: " + listCar.stream().toList());
     return listCar;
   }
 
@@ -96,7 +98,7 @@ public class CarServiceImpl implements CarService {
             () -> {
               throw new NotFoundException("Name not existed!");
             });
-    LOGGER.info("GET BY NAME: " + carPage.getContent());
+    LOGGER.info("Service: Get by name : " + carPage.getContent());
     return carPage;
   }
 
@@ -108,7 +110,7 @@ public class CarServiceImpl implements CarService {
             () -> {
               throw new NotFoundException("Brand Car not existed!");
             });
-    LOGGER.info("GET BY NAME: " + carsPage.getContent());
+    LOGGER.info("Service: Get by brand: " + carsPage.getContent());
     return carsPage;
   }
 
@@ -120,7 +122,7 @@ public class CarServiceImpl implements CarService {
             () -> {
               throw new NotFoundException("Color not existed!");
             });
-    LOGGER.info("GET BY COLOR: " + carsPage.getContent());
+    LOGGER.info("Service: Get by color: " + carsPage.getContent());
     return carsPage;
   }
 
@@ -132,7 +134,7 @@ public class CarServiceImpl implements CarService {
             () -> {
               throw new NotFoundException("Color not existed!");
             });
-    LOGGER.info("GET BY PRICE: " + carsPage.getContent());
+    LOGGER.info("Service: Get by price : " + carsPage.getContent());
     return carsPage;
   }
 
@@ -144,7 +146,7 @@ public class CarServiceImpl implements CarService {
             () -> {
               throw new NotFoundException("Engine type not existed!");
             });
-    LOGGER.info("GET BY ENGINE TYPE : " + carsPage.getContent());
+    LOGGER.info("Service: Get by engine type: " + carsPage.getContent());
     return carsPage;
   }
 
@@ -152,11 +154,15 @@ public class CarServiceImpl implements CarService {
   @Override
   public void deleteCar(String id) {
     boolean checkExistCar = carRepository.existsById(id);
-    if (!checkExistCar) throw new NotFoundException("Car not found!");
+    if (!checkExistCar) {
+      throw new NotFoundException("Car not found!");
+    }
     carRepository.deleteById(id);
     boolean checkExistCarDelete = carRepository.existsById(id);
-    if (checkExistCarDelete) throw new ServerInternalException("Delete car failed!");
-    LOGGER.info("Delete car successful");
+    if (checkExistCarDelete) {
+      throw new ServerInternalException("Delete car failed!");
+    }
+    LOGGER.info("Service: Delete car successful");
   }
 
   @CacheEvict
@@ -164,8 +170,10 @@ public class CarServiceImpl implements CarService {
   public void deleteCars() {
     carRepository.deleteAll();
     List<Car> listCar = carRepository.findAll();
-    if (!listCar.isEmpty()) throw new ServerInternalException("Delete all car failed!");
-    LOGGER.info("Delete all car successful");
+    if (!listCar.isEmpty()) {
+      throw new ServerInternalException("Delete all car failed!");
+    }
+    LOGGER.info("Service: Delete all car successful");
   }
 }
 // paging
