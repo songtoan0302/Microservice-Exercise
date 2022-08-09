@@ -5,7 +5,6 @@
    http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.4.xsd">
 
     <changeSet id="001" author="ToanNs">
-        <validCheckSum>8:fb41987e115d97810f12dd0c9a5f90a6</validCheckSum>
         <createTable tableName="cars">
             <column name="id" type="varchar(50)">
                 <constraints primaryKey="true" primaryKeyName="pk_car_id" unique="true"/>

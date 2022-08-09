@@ -12,13 +12,13 @@ public class CarDTO {
   private String engineType; // loại động cơ
   @NotBlank
   private String color; // màu xe
-  private long price;
-  private int amount;
+  private Long price;
+  private Integer amount;
 
   public CarDTO() {}
 
   public CarDTO(
-      String name, String brandCar, String engineType, String color, long price, int amount) {
+      String name, String brandCar, String engineType, String color, Long price, Integer amount) {
     this.name = name;
     this.brandCar = brandCar;
     this.engineType = engineType;
@@ -59,19 +59,19 @@ public class CarDTO {
     this.color = color;
   }
 
-  public long getPrice() {
+  public Long getPrice() {
     return price;
   }
 
-  public void setPrice(long price) {
+  public void setPrice(Long price) {
     this.price = price;
   }
 
-  public int getAmount() {
+  public Integer getAmount() {
     return amount;
   }
 
-  public void setAmount(int amount) {
+  public void setAmount(Integer amount) {
     this.amount = amount;
   }
 
