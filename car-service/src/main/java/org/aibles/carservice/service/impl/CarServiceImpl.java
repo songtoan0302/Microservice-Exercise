@@ -40,11 +40,7 @@ public class CarServiceImpl implements CarService {
   @Override
   public CarDTO create(CarDTO carDTO) {
     Car car = modelMapper.map(carDTO, Car.class);
-    Car carCreated = carRepository.save(car);
-    Optional.ofNullable(carCreated).orElseThrow(() -> {
-      throw new InternalServerException("Create car failed!Please try again!");
-    });
-    CarDTO carDTOUpdated = modelMapper.map(carCreated, CarDTO.class);
+    CarDTO carDTOUpdated = modelMapper.map(carRepository.save(car), CarDTO.class);
     LOGGER.info("(Create) CarDTO: {}", carDTOUpdated);
     return carDTOUpdated;
   }
@@ -57,15 +53,7 @@ public class CarServiceImpl implements CarService {
   @Cacheable(value = "car", key = "#id")
   @Override
   public void delete(String id) {
-    boolean checkExistCar = carRepository.existsById(id);
-    if (!checkExistCar) {
-      throw new NotFoundException("Car not found!");
-    }
     carRepository.deleteById(id);
-    boolean checkExistCarDelete = carRepository.existsById(id);
-    if (checkExistCarDelete) {
-      throw new InternalServerException("Delete car failed!");
-    }
     LOGGER.info("(Delete)");
   }
 
@@ -76,10 +64,6 @@ public class CarServiceImpl implements CarService {
   @Override
   public void deleteAll() {
     carRepository.deleteAll();
-    List<Car> listCar = carRepository.findAll();
-    if (!listCar.isEmpty()) {
-      throw new InternalServerException("Delete all car failed!");
-    }
     LOGGER.info("(DeleteAll)");
   }
 
@@ -96,7 +80,9 @@ public class CarServiceImpl implements CarService {
     Car car = carRepository.findById(id).orElseThrow(() -> {
       throw new NotFoundException("Car not found!");
     });
-    Car carUpdate = carRepository.save(car);
+    Car carUpdate=modelMapper.map(carDTO,Car.class);
+    carUpdate.setId(car.getId());
+     carUpdate = carRepository.save(carUpdate);
     LOGGER.info("(Update) car: {} ", carUpdate);
     return modelMapper.map(carUpdate, CarDTO.class);
   }
@@ -127,9 +113,6 @@ public class CarServiceImpl implements CarService {
   @Override
   public Page<Car> list(ListCarsCriteria listCarsCriteria,Pageable pageable) {
     Page<Car> listCarPage = carRepository.findAll(listCarsCriteria.toSpecification(),pageable);
-    Optional.ofNullable(listCarPage).orElseThrow(() -> {
-      throw new NotFoundException("Cars not found!");
-    });
     LOGGER.info("(list) page :{}", listCarPage);
     return listCarPage;
   }
