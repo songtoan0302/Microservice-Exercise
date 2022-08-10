@@ -1,5 +1,6 @@
 package org.aibles.carservice.service.impl;
 
+import java.util.Objects;
 import javax.transaction.Transactional;
 import org.aibles.carservice.dto.CarDTO;
 import org.aibles.carservice.exception.NotFoundException;
@@ -16,8 +17,6 @@ import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import java.util.List;
-import java.util.Optional;
 @Transactional
 public class CarServiceImpl implements CarService {
 
@@ -40,6 +39,8 @@ public class CarServiceImpl implements CarService {
   @Override
   public CarDTO create(CarDTO carDTO) {
     Car car = modelMapper.map(carDTO, Car.class);
+    if(Objects.isNull(car))
+      throw new InternalServerException("Mapping fails!");
     CarDTO carDTOUpdated = modelMapper.map(carRepository.save(car), CarDTO.class);
     LOGGER.info("(Create) CarDTO: {}", carDTOUpdated);
     return carDTOUpdated;
@@ -81,6 +82,8 @@ public class CarServiceImpl implements CarService {
       throw new NotFoundException("Car not found!");
     });
     Car carUpdate=modelMapper.map(carDTO,Car.class);
+    if (Objects.isNull(carUpdate))
+      throw new InternalServerException("Mapping fails");
     carUpdate.setId(car.getId());
      carUpdate = carRepository.save(carUpdate);
     LOGGER.info("(Update) car: {} ", carUpdate);
