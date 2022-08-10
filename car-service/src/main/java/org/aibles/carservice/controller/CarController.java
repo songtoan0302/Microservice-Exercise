@@ -59,7 +59,7 @@ public class CarController {
 
   @GetMapping
   @ResponseStatus(HttpStatus.OK)
-  public PagingRes<Car> list(ListCarsCriteria listCarsCriteria,@Validated() final PagingReq pagingReq) {
+  public PagingRes<Car> list(@RequestBody ListCarsCriteria listCarsCriteria,@Validated() final PagingReq pagingReq) {
     LOGGER.info("(list) PagingReq: {}", pagingReq);
     return PagingRes.of(carService.list(listCarsCriteria,pagingReq.makePageable()));
   }
