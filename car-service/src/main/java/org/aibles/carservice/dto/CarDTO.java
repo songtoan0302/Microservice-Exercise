@@ -7,7 +7,7 @@ public class CarDTO {
   @NotBlank
   private String name; // tên
   @NotBlank
-  private String brandCar; // thương hiệu
+  private String brand; // thương hiệu
   @NotBlank
   private String engineType; // loại động cơ
   @NotBlank
@@ -18,9 +18,9 @@ public class CarDTO {
   public CarDTO() {}
 
   public CarDTO(
-      String name, String brandCar, String engineType, String color, Long price, Integer amount) {
+      String name, String brand, String engineType, String color, Long price, Integer amount) {
     this.name = name;
-    this.brandCar = brandCar;
+    this.brand = brand;
     this.engineType = engineType;
     this.color = color;
     this.price = price;
@@ -35,12 +35,12 @@ public class CarDTO {
     this.name = name;
   }
 
-  public String getBrandCar() {
-    return brandCar;
+  public String getbrand() {
+    return brand;
   }
 
-  public void setBrandCar(String brandCar) {
-    this.brandCar = brandCar;
+  public void setbrand(String brand) {
+    this.brand = brand;
   }
 
   public String getEngineType() {
@@ -87,14 +87,14 @@ public class CarDTO {
     return price == carDTO.price
         && amount == carDTO.amount
         && Objects.equals(name, carDTO.name)
-        && Objects.equals(brandCar, carDTO.brandCar)
+        && Objects.equals(brand, carDTO.brand)
         && Objects.equals(engineType, carDTO.engineType)
         && Objects.equals(color, carDTO.color);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(name, brandCar, engineType, color, price, amount);
+    return Objects.hash(name, brand, engineType, color, price, amount);
   }
 
   @Override
@@ -103,8 +103,8 @@ public class CarDTO {
         + "name='"
         + name
         + '\''
-        + ", brandCar='"
-        + brandCar
+        + ", brand='"
+        + brand
         + '\''
         + ", engineType='"
         + engineType

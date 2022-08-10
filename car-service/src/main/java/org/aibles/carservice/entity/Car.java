@@ -18,8 +18,8 @@ public class Car {
   @Column(name = "name")
   private String name; // tên
 
-  @Column(name = "brand_car")
-  private String brandCar; // thương hiệu
+  @Column(name = "brand")
+  private String brand; // thương hiệu
 
   @Column(name = "engine_type")
   private String engineType; // loại động cơ
@@ -38,10 +38,10 @@ public class Car {
   }
 
   public Car(String id,
-      String name, String brandCar, String engineType, String color, long price, int amount) {
+      String name, String brand, String engineType, String color, long price, int amount) {
     this.id=UUID.randomUUID().toString();
     this.name = name;
-    this.brandCar = brandCar;
+    this.brand = brand;
     this.engineType = engineType;
     this.color = color;
     this.price = price;
@@ -64,12 +64,12 @@ public class Car {
     this.name = name;
   }
 
-  public String getBrandCar() {
-    return brandCar;
+  public String getbrand() {
+    return brand;
   }
 
-  public void setBrandCar(String brandCar) {
-    this.brandCar = brandCar;
+  public void setbrand(String brand) {
+    this.brand = brand;
   }
 
   public String getEngineType() {
@@ -117,14 +117,14 @@ public class Car {
         && amount == car.amount
         && Objects.equals(id, car.id)
         && Objects.equals(name, car.name)
-        && Objects.equals(brandCar, car.brandCar)
+        && Objects.equals(brand, car.brand)
         && Objects.equals(engineType, car.engineType)
         && Objects.equals(color, car.color);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(id, name, brandCar, engineType, color, price, amount);
+    return Objects.hash(id, name, brand, engineType, color, price, amount);
   }
 
   @Override
@@ -136,8 +136,8 @@ public class Car {
         + ", name='"
         + name
         + '\''
-        + ", brandCar='"
-        + brandCar
+        + ", brand='"
+        + brand
         + '\''
         + ", engineType='"
         + engineType

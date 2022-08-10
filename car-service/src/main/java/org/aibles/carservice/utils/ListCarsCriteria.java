@@ -13,7 +13,7 @@ import org.springframework.data.jpa.domain.Specification;
 public class ListCarsCriteria {
 
   private String name;
-  private String brandCar;
+  private String brand;
   private String engineType;
   private String color;
   private Long price;
@@ -26,8 +26,8 @@ public class ListCarsCriteria {
       if (StringUtils.isNotBlank(name)) {
         predicate.add(criteriaBuilder.like(root.get("name"), StringUtils.wrap(name, '%')));
       }
-      if (StringUtils.isNotBlank(brandCar)) {
-        predicate.add(criteriaBuilder.like(root.get("brandCar"), StringUtils.wrap(brandCar, '%')));
+      if (StringUtils.isNotBlank(brand)) {
+        predicate.add(criteriaBuilder.like(root.get("brand"), StringUtils.wrap(brand, '%')));
       }
       if (StringUtils.isNotBlank(engineType)) {
         predicate.add(criteriaBuilder.like(root.get("engineType"), StringUtils.wrap(engineType, '%')));
