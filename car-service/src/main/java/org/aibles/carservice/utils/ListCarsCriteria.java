@@ -2,6 +2,7 @@ package org.aibles.carservice.utils;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import javax.persistence.criteria.Predicate;
 import lombok.Data;
 import org.apache.commons.lang3.StringUtils;
@@ -35,7 +36,7 @@ public class ListCarsCriteria {
       if (StringUtils.isNotBlank(color)) {
         predicate.add(criteriaBuilder.like(root.get("color"), StringUtils.wrap(color, '%')));
       }
-      if (price != null) {
+      if (Objects.nonNull(price)) {
         predicate.add(criteriaBuilder.equal(root.get("price"), price));
       }
 
