@@ -1,5 +1,6 @@
 package org.aibles.carservice.entity;
 
+import java.util.UUID;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
@@ -32,5 +33,9 @@ public class Car {
 
   @Column(name = "amount")
   private int amount;
+
+  public Car(){
+    this.id= UUID.randomUUID().toString();
+  }
 
 }

@@ -1,26 +1,30 @@
 package org.aibles.carservice.service.impl;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
-import javax.transaction.Transactional;
+import lombok.extern.slf4j.Slf4j;
+import org.aibles.carservice.constants.Operation;
 import org.aibles.carservice.dto.CarDTO;
-import org.aibles.carservice.exception.NotFoundException;
-import org.aibles.carservice.exception.InternalServerException;
+import org.aibles.carservice.dto.CarFilterDTO;
+import org.aibles.carservice.dto.SearchCriteria;
 import org.aibles.carservice.entity.Car;
+import org.aibles.carservice.exception.NotFoundException;
+import org.aibles.carservice.exception.SystemException;
 import org.aibles.carservice.repository.CarRepository;
 import org.aibles.carservice.service.CarService;
-import org.aibles.carservice.utils.ListCarsCriteria;
+import org.aibles.carservice.utils.BaseCriteria;
 import org.modelmapper.ModelMapper;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-@Transactional
-public class CarServiceImpl implements CarService {
+import org.springframework.http.HttpStatus;
+import org.springframework.transaction.annotation.Transactional;
 
-  private static final Logger LOGGER = LoggerFactory.getLogger(CarServiceImpl.class);
+@Slf4j
+public class CarServiceImpl implements CarService {
 
   private final CarRepository carRepository;
   private final ModelMapper modelMapper;
@@ -31,19 +35,19 @@ public class CarServiceImpl implements CarService {
   }
 
   /**
-   * create  a car
+   * create a car
    *
    * @param carDTO
    * @return
    */
   @Override
+  @Transactional
   public CarDTO create(CarDTO carDTO) {
+    log.info("(Create) CarDTO: {}", carDTO);
     Car car = modelMapper.map(carDTO, Car.class);
-    if(Objects.isNull(car))
-      throw new InternalServerException("Mapping fails!");
-    CarDTO carDTOUpdated = modelMapper.map(carRepository.save(car), CarDTO.class);
-    LOGGER.info("(Create) CarDTO: {}", carDTOUpdated);
-    return carDTOUpdated;
+    if (Objects.isNull(car))
+      throw new SystemException("Mapping fails!", HttpStatus.INTERNAL_SERVER_ERROR);
+    return modelMapper.map(carRepository.save(car), CarDTO.class);
   }
 
   /**
@@ -53,19 +57,19 @@ public class CarServiceImpl implements CarService {
    */
   @Cacheable(value = "car", key = "#id")
   @Override
+  @Transactional
   public void delete(String id) {
+    log.info("(Delete)");
     carRepository.deleteById(id);
-    LOGGER.info("(Delete)");
   }
 
-  /**
-   * delete all car
-   */
+  /** delete all car */
   @CacheEvict
   @Override
+  @Transactional
   public void deleteAll() {
+    log.info("(DeleteAll)");
     carRepository.deleteAll();
-    LOGGER.info("(DeleteAll)");
   }
 
   /**
@@ -77,16 +81,21 @@ public class CarServiceImpl implements CarService {
    */
   @CachePut(value = "car", key = "#id")
   @Override
+  @Transactional
   public CarDTO update(CarDTO carDTO, String id) {
-    Car car = carRepository.findById(id).orElseThrow(() -> {
-      throw new NotFoundException("Car not found!");
-    });
-    Car carUpdate=modelMapper.map(carDTO,Car.class);
+    log.info("(Update) carDTO: {},id: {} ", carDTO, id);
+    Car car =
+        carRepository
+            .findById(id)
+            .orElseThrow(
+                () -> {
+                  throw new SystemException("Car not found!",HttpStatus.NOT_FOUND);
+                });
+    Car carUpdate = modelMapper.map(carDTO, Car.class);
     if (Objects.isNull(carUpdate))
-      throw new InternalServerException("Mapping fails");
+      throw new SystemException("Mapping fails", HttpStatus.INTERNAL_SERVER_ERROR);
     carUpdate.setId(car.getId());
-     carUpdate = carRepository.save(carUpdate);
-    LOGGER.info("(Update) car: {} ", carUpdate);
+    carUpdate = carRepository.save(carUpdate);
     return modelMapper.map(carUpdate, CarDTO.class);
   }
 
@@ -98,13 +107,17 @@ public class CarServiceImpl implements CarService {
    */
   @Cacheable(value = "car", key = "#id")
   @Override
+  @Transactional(readOnly = true)
   public CarDTO get(String id) {
-    Car car = carRepository.findById(id).orElseThrow(() -> {
-      throw new NotFoundException("Car not found! ");
-    });
-    CarDTO carDTO = modelMapper.map(car, CarDTO.class);
-    LOGGER.info("(Get) carDTO: {} ", carDTO);
-    return carDTO;
+    log.info("(Get) id: {} ", id);
+    Car car =
+        carRepository
+            .findById(id)
+            .orElseThrow(
+                () -> {
+                  throw new SystemException("Car not found", HttpStatus.NOT_FOUND);
+                });
+    return modelMapper.map(car, CarDTO.class);
   }
 
   /**
@@ -114,9 +127,44 @@ public class CarServiceImpl implements CarService {
    * @return
    */
   @Override
-  public Page<Car> list(ListCarsCriteria listCarsCriteria,Pageable pageable) {
-    Page<Car> listCarPage = carRepository.findAll(listCarsCriteria.toSpecification(),pageable);
-    LOGGER.info("(list) page :{}", listCarPage);
-    return listCarPage;
+  @Transactional(readOnly = true)
+  public Page<Car> list(Pageable pageable) {
+    log.info("(list) page");
+    return carRepository.findAll(pageable);
+  }
+
+  @Override
+  @Transactional(readOnly = true)
+  public List<Car> filter(CarFilterDTO carFilterDTO) {
+    log.info("(filter) carFilterDTO: {}",carFilterDTO);
+    BaseCriteria<Car> baseCriteria = new BaseCriteria<>();
+    List<SearchCriteria> searchCriteriaList = buildListSearchCriteria(carFilterDTO);
+    return carRepository.findAll(baseCriteria.toSpecification(searchCriteriaList));
+  }
+
+  private List<SearchCriteria> buildListSearchCriteria(CarFilterDTO carFilterDTO) {
+    List<SearchCriteria> searchCriteriaList = new ArrayList<>();
+    if (Objects.nonNull(carFilterDTO.getName())) {
+      searchCriteriaList.add(new SearchCriteria("name", Operation.LIKE, carFilterDTO.getName()));
+    }
+    if (Objects.nonNull(carFilterDTO.getAmount())) {
+      searchCriteriaList.add(
+          new SearchCriteria("amount", Operation.EQUALS, carFilterDTO.getAmount()));
+    }
+    if (Objects.nonNull(carFilterDTO.getBrand())) {
+      searchCriteriaList.add(new SearchCriteria("brand", Operation.LIKE, carFilterDTO.getBrand()));
+    }
+    if (Objects.nonNull(carFilterDTO.getColor())) {
+      searchCriteriaList.add(new SearchCriteria("color", Operation.LIKE, carFilterDTO.getColor()));
+    }
+    if (Objects.nonNull(carFilterDTO.getEngineType())) {
+      searchCriteriaList.add(
+          new SearchCriteria("engineType", Operation.LIKE, carFilterDTO.getEngineType()));
+    }
+    if (Objects.nonNull(carFilterDTO.getPrice())) {
+      searchCriteriaList.add(
+          new SearchCriteria("price", Operation.EQUALS, carFilterDTO.getPrice()));
+    }
+    return searchCriteriaList;
   }
 }
