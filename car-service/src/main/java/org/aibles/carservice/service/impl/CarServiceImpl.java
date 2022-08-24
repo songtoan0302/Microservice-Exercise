@@ -9,7 +9,6 @@ import org.aibles.carservice.dto.CarDTO;
 import org.aibles.carservice.dto.CarFilterDTO;
 import org.aibles.carservice.dto.SearchCriteria;
 import org.aibles.carservice.entity.Car;
-import org.aibles.carservice.exception.NotFoundException;
 import org.aibles.carservice.exception.SystemException;
 import org.aibles.carservice.repository.CarRepository;
 import org.aibles.carservice.service.CarService;
@@ -21,9 +20,11 @@ import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
+import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Slf4j
+@Service
 public class CarServiceImpl implements CarService {
 
   private final CarRepository carRepository;
@@ -89,7 +90,7 @@ public class CarServiceImpl implements CarService {
             .findById(id)
             .orElseThrow(
                 () -> {
-                  throw new SystemException("Car not found!",HttpStatus.NOT_FOUND);
+                  throw new SystemException("Car not found!", HttpStatus.NOT_FOUND);
                 });
     Car carUpdate = modelMapper.map(carDTO, Car.class);
     if (Objects.isNull(carUpdate))
@@ -136,7 +137,7 @@ public class CarServiceImpl implements CarService {
   @Override
   @Transactional(readOnly = true)
   public List<Car> filter(CarFilterDTO carFilterDTO) {
-    log.info("(filter) carFilterDTO: {}",carFilterDTO);
+    log.info("(filter) carFilterDTO: {}", carFilterDTO);
     BaseCriteria<Car> baseCriteria = new BaseCriteria<>();
     List<SearchCriteria> searchCriteriaList = buildListSearchCriteria(carFilterDTO);
     return carRepository.findAll(baseCriteria.toSpecification(searchCriteriaList));
