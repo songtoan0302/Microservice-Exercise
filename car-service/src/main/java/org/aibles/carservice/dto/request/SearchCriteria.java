@@ -1,4 +1,4 @@
-package org.aibles.carservice.dto;
+package org.aibles.carservice.dto.request;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

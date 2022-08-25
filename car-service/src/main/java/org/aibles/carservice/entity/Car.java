@@ -4,6 +4,7 @@ import java.util.UUID;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
+import javax.persistence.PrePersist;
 import javax.persistence.Table;
 import lombok.Data;
 
@@ -34,8 +35,8 @@ public class Car {
   @Column(name = "amount")
   private int amount;
 
-  public Car(){
-    this.id= UUID.randomUUID().toString();
+  @PrePersist
+  private void prePersistId() {
+    this.id = this.id == null ? UUID.randomUUID().toString() : id;
   }
-
 }

@@ -1,11 +1,10 @@
 package org.aibles.carservice.service;
 
 import lombok.extern.slf4j.Slf4j;
-import org.aibles.carservice.exception.SystemException;
+import org.aibles.carservice.exceptions.NotFoundException;
 import org.aibles.carservice.repository.BaseRepository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.http.HttpStatus;
 
 /**
  * @author ToanNS
@@ -26,7 +25,7 @@ public class BaseService<T, H> {
         .findById(id)
         .orElseThrow(
             () -> {
-              throw new SystemException("Entity not found! ", HttpStatus.NOT_FOUND);
+              throw new NotFoundException("Entity not found! ");
             });
   }
 
@@ -36,7 +35,7 @@ public class BaseService<T, H> {
         .findById(id)
         .orElseThrow(
             () -> {
-              throw new SystemException("Entity not found!", HttpStatus.NOT_FOUND);
+              throw new NotFoundException("Entity not found! ");
             });
     return baseRepository.save(entity);
   }

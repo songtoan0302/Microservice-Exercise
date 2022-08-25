@@ -5,21 +5,23 @@ import java.util.List;
 import java.util.Objects;
 import lombok.extern.slf4j.Slf4j;
 import org.aibles.carservice.constants.Operation;
-import org.aibles.carservice.dto.CarDTO;
-import org.aibles.carservice.dto.CarFilterDTO;
-import org.aibles.carservice.dto.SearchCriteria;
+import org.aibles.carservice.dto.request.CarCreate;
+import org.aibles.carservice.dto.request.CarFilterRequest;
+import org.aibles.carservice.dto.request.CarUpdate;
+import org.aibles.carservice.dto.request.SearchCriteria;
+import org.aibles.carservice.dto.response.CarResponse;
 import org.aibles.carservice.entity.Car;
-import org.aibles.carservice.exception.SystemException;
+import org.aibles.carservice.exceptions.InternalServerException;
+import org.aibles.carservice.exceptions.NotFoundException;
 import org.aibles.carservice.repository.CarRepository;
 import org.aibles.carservice.service.CarService;
-import org.aibles.carservice.utils.BaseCriteria;
+import org.aibles.carservice.components.BaseCriteria;
 import org.modelmapper.ModelMapper;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -38,17 +40,16 @@ public class CarServiceImpl implements CarService {
   /**
    * create a car
    *
-   * @param carDTO
+   * @param carCreate
    * @return
    */
   @Override
   @Transactional
-  public CarDTO create(CarDTO carDTO) {
-    log.info("(Create) CarDTO: {}", carDTO);
-    Car car = modelMapper.map(carDTO, Car.class);
-    if (Objects.isNull(car))
-      throw new SystemException("Mapping fails!", HttpStatus.INTERNAL_SERVER_ERROR);
-    return modelMapper.map(carRepository.save(car), CarDTO.class);
+  public CarResponse create(CarCreate carCreate) {
+    log.info("(create)CarDTO: {}", carCreate);
+    Car car = modelMapper.map(carCreate, Car.class);
+    if (Objects.isNull(car)) throw new InternalServerException("Mapping fails!");
+    return modelMapper.map(carRepository.save(car), CarResponse.class);
   }
 
   /**
@@ -60,7 +61,7 @@ public class CarServiceImpl implements CarService {
   @Override
   @Transactional
   public void delete(String id) {
-    log.info("(Delete)");
+    log.info("(delete)");
     carRepository.deleteById(id);
   }
 
@@ -69,35 +70,34 @@ public class CarServiceImpl implements CarService {
   @Override
   @Transactional
   public void deleteAll() {
-    log.info("(DeleteAll)");
+    log.info("(deleteAll)");
     carRepository.deleteAll();
   }
 
   /**
    * update a car
    *
-   * @param carDTO
+   * @param carCreate
    * @param id
    * @return
    */
   @CachePut(value = "car", key = "#id")
   @Override
   @Transactional
-  public CarDTO update(CarDTO carDTO, String id) {
-    log.info("(Update) carDTO: {},id: {} ", carDTO, id);
+  public CarResponse update(CarUpdate carUpdate, String id) {
+    log.info("(update)carDTO: {}, id: {} ", carUpdate, id);
     Car car =
         carRepository
             .findById(id)
             .orElseThrow(
                 () -> {
-                  throw new SystemException("Car not found!", HttpStatus.NOT_FOUND);
+                  throw new NotFoundException(id);
                 });
-    Car carUpdate = modelMapper.map(carDTO, Car.class);
-    if (Objects.isNull(carUpdate))
-      throw new SystemException("Mapping fails", HttpStatus.INTERNAL_SERVER_ERROR);
-    carUpdate.setId(car.getId());
-    carUpdate = carRepository.save(carUpdate);
-    return modelMapper.map(carUpdate, CarDTO.class);
+    Car carUpdated = modelMapper.map(carUpdate, Car.class);
+    if (Objects.isNull(carUpdated)) throw new InternalServerException("Mapping fails");
+    carUpdated.setId(car.getId());
+    carUpdated = carRepository.save(carUpdated);
+    return modelMapper.map(carUpdated, CarResponse.class);
   }
 
   /**
@@ -109,16 +109,16 @@ public class CarServiceImpl implements CarService {
   @Cacheable(value = "car", key = "#id")
   @Override
   @Transactional(readOnly = true)
-  public CarDTO get(String id) {
-    log.info("(Get) id: {} ", id);
+  public CarResponse get(String id) {
+    log.info("(get)id: {} ", id);
     Car car =
         carRepository
             .findById(id)
             .orElseThrow(
                 () -> {
-                  throw new SystemException("Car not found", HttpStatus.NOT_FOUND);
+                  throw new NotFoundException(id);
                 });
-    return modelMapper.map(car, CarDTO.class);
+    return modelMapper.map(car, CarResponse.class);
   }
 
   /**
@@ -129,42 +129,42 @@ public class CarServiceImpl implements CarService {
    */
   @Override
   @Transactional(readOnly = true)
-  public Page<Car> list(Pageable pageable) {
-    log.info("(list) page");
-    return carRepository.findAll(pageable);
+  public Page<CarResponse> list(Pageable pageable) {
+    log.info("(list)page: {}", pageable);
+    return carRepository.findAll(pageable).map(car -> modelMapper.map(car,CarResponse.class));
   }
 
   @Override
   @Transactional(readOnly = true)
-  public List<Car> filter(CarFilterDTO carFilterDTO) {
-    log.info("(filter) carFilterDTO: {}", carFilterDTO);
+  public List<Car> filter(CarFilterRequest carFilterRequest) {
+    log.info("(filter)carFilterDTO: {}", carFilterRequest);
     BaseCriteria<Car> baseCriteria = new BaseCriteria<>();
-    List<SearchCriteria> searchCriteriaList = buildListSearchCriteria(carFilterDTO);
+    List<SearchCriteria> searchCriteriaList = buildListSearchCriteria(carFilterRequest);
     return carRepository.findAll(baseCriteria.toSpecification(searchCriteriaList));
   }
 
-  private List<SearchCriteria> buildListSearchCriteria(CarFilterDTO carFilterDTO) {
+  private List<SearchCriteria> buildListSearchCriteria(CarFilterRequest carFilterRequest) {
     List<SearchCriteria> searchCriteriaList = new ArrayList<>();
-    if (Objects.nonNull(carFilterDTO.getName())) {
-      searchCriteriaList.add(new SearchCriteria("name", Operation.LIKE, carFilterDTO.getName()));
+    if (Objects.nonNull(carFilterRequest.getName())) {
+      searchCriteriaList.add(new SearchCriteria("name", Operation.LIKE, carFilterRequest.getName()));
     }
-    if (Objects.nonNull(carFilterDTO.getAmount())) {
+    if (Objects.nonNull(carFilterRequest.getAmount())) {
       searchCriteriaList.add(
-          new SearchCriteria("amount", Operation.EQUALS, carFilterDTO.getAmount()));
+          new SearchCriteria("amount", Operation.EQUALS, carFilterRequest.getAmount()));
     }
-    if (Objects.nonNull(carFilterDTO.getBrand())) {
-      searchCriteriaList.add(new SearchCriteria("brand", Operation.LIKE, carFilterDTO.getBrand()));
+    if (Objects.nonNull(carFilterRequest.getBrand())) {
+      searchCriteriaList.add(new SearchCriteria("brand", Operation.LIKE, carFilterRequest.getBrand()));
     }
-    if (Objects.nonNull(carFilterDTO.getColor())) {
-      searchCriteriaList.add(new SearchCriteria("color", Operation.LIKE, carFilterDTO.getColor()));
+    if (Objects.nonNull(carFilterRequest.getColor())) {
+      searchCriteriaList.add(new SearchCriteria("color", Operation.LIKE, carFilterRequest.getColor()));
     }
-    if (Objects.nonNull(carFilterDTO.getEngineType())) {
+    if (Objects.nonNull(carFilterRequest.getEngineType())) {
       searchCriteriaList.add(
-          new SearchCriteria("engineType", Operation.LIKE, carFilterDTO.getEngineType()));
+          new SearchCriteria("engineType", Operation.LIKE, carFilterRequest.getEngineType()));
     }
-    if (Objects.nonNull(carFilterDTO.getPrice())) {
+    if (Objects.nonNull(carFilterRequest.getPrice())) {
       searchCriteriaList.add(
-          new SearchCriteria("price", Operation.EQUALS, carFilterDTO.getPrice()));
+          new SearchCriteria("price", Operation.EQUALS, carFilterRequest.getPrice()));
     }
     return searchCriteriaList;
   }

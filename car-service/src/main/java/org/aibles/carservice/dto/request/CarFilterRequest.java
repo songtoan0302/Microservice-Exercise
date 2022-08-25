@@ -1,4 +1,4 @@
-package org.aibles.carservice.dto;
+package org.aibles.carservice.dto.request;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
@@ -9,7 +9,7 @@ import lombok.Data;
  */
 @Data
 @JsonInclude(Include.NON_NULL)
-public class CarFilterDTO {
+public class CarFilterRequest {
   private String name;
 
   private String brand;

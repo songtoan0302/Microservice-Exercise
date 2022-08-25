@@ -1,4 +1,4 @@
-package org.aibles.carservice.utils;
+package org.aibles.carservice.components;
 
 import java.util.ArrayList;
 import java.util.List;

@@ -10,7 +10,4 @@ public class BaseController<T,H> {
 
   private BaseService<T,H> baseService;
 
-
-
-
 }

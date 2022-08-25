@@ -1,4 +1,4 @@
-package org.aibles.carservice.exception.response;
+package org.aibles.carservice.exceptions.response;
 
 import java.time.Instant;
 

@@ -1,28 +1,28 @@
 package org.aibles.carservice.service;
 
 import java.util.List;
-import org.aibles.carservice.dto.CarDTO;
-import org.aibles.carservice.dto.CarFilterDTO;
+import org.aibles.carservice.dto.request.CarCreate;
+import org.aibles.carservice.dto.request.CarFilterRequest;
+import org.aibles.carservice.dto.request.CarUpdate;
+import org.aibles.carservice.dto.response.CarResponse;
 import org.aibles.carservice.entity.Car;
-import org.aibles.carservice.utils.BaseCriteria;
-import org.aibles.carservice.utils.ListCarsCriteria;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
 public interface CarService {
 
-  CarDTO create(CarDTO carDTO);
+  CarResponse create(CarCreate carCreate);
 
   void delete(String id);
 
   void deleteAll();
 
-  CarDTO get(String id);
+  CarResponse get(String id);
 
-  Page<Car> list(Pageable pageable);
+  Page<CarResponse> list(Pageable pageable);
 
-  CarDTO update(CarDTO carDTO, String id);
+  CarResponse update(CarUpdate carUpdate, String id);
 
-  List<Car> filter(CarFilterDTO carFilterDTO);
+  List<Car> filter(CarFilterRequest carFilterRequest);
 
 }

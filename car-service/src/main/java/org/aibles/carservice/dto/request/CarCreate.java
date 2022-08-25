@@ -1,23 +1,23 @@
-package org.aibles.carservice.dto;
+package org.aibles.carservice.dto.request;
 
 import java.util.Objects;
 import javax.validation.constraints.NotBlank;
 
-public class CarDTO {
+public class CarCreate {
   @NotBlank
-  private String name; // tên
+  private String name;
   @NotBlank
-  private String brand; // thương hiệu
+  private String brand;
   @NotBlank
-  private String engineType; // loại động cơ
+  private String engineType;
   @NotBlank
-  private String color; // màu xe
+  private String color;
   private Long price;
   private Integer amount;
 
-  public CarDTO() {}
+  public CarCreate() {}
 
-  public CarDTO(
+  public CarCreate(
       String name, String brand, String engineType, String color, Long price, Integer amount) {
     this.name = name;
     this.brand = brand;
@@ -83,13 +83,13 @@ public class CarDTO {
     if (o == null || getClass() != o.getClass()) {
       return false;
     }
-    CarDTO carDTO = (CarDTO) o;
-    return price == carDTO.price
-        && amount == carDTO.amount
-        && Objects.equals(name, carDTO.name)
-        && Objects.equals(brand, carDTO.brand)
-        && Objects.equals(engineType, carDTO.engineType)
-        && Objects.equals(color, carDTO.color);
+    CarCreate carCreate = (CarCreate) o;
+    return price == carCreate.price
+        && amount == carCreate.amount
+        && Objects.equals(name, carCreate.name)
+        && Objects.equals(brand, carCreate.brand)
+        && Objects.equals(engineType, carCreate.engineType)
+        && Objects.equals(color, carCreate.color);
   }
 
   @Override

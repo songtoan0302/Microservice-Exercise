@@ -1,10 +1,10 @@
-package org.aibles.carservice.utils;
+package org.aibles.carservice.components;
 
 import java.util.ArrayList;
 import java.util.List;
 import javax.persistence.criteria.Predicate;
 import org.aibles.carservice.constants.Operation;
-import org.aibles.carservice.dto.SearchCriteria;
+import org.aibles.carservice.dto.request.SearchCriteria;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.data.jpa.domain.Specification;
 
